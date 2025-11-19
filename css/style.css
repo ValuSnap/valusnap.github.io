@@ -467,6 +467,22 @@ ul.costomer li a {
      .banner_main .text-img figure img {
           border-radius: 18px;
      }
+
+     /* Ensure both screenshot figures keep the same displayed aspect ratio on mobile
+        Use a fixed aspect-ratio on the figure and make the image fit the box without
+        distortion (object-fit: contain). This keeps visual consistency between images. */
+     .banner_main .text-img figure {
+          width: 90%;
+          aspect-ratio: 16/9;
+          display: block;
+          overflow: hidden;
+     }
+     .banner_main .text-img figure img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          display: block;
+     }
 }
 
 .titlepage {
