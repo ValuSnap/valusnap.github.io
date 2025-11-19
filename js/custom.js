@@ -369,4 +369,38 @@ $(function () {
 	});
 
 
+	/* Ensure banner image never expands the outer row: make it match the left text height
+	   This sets the image's max-height to the `.text-bg` height and updates on resize
+	   and when the text size changes (using ResizeObserver where available). */
+
+	function syncBannerImageToText() {
+		var textCol = document.querySelector('.banner_main .text-bg');
+		var imgs = document.querySelectorAll('.banner_main .text-img figure img');
+		if (!textCol || !imgs || imgs.length === 0) return;
+		var textHeight = Math.round(textCol.getBoundingClientRect().height);
+		// apply max-height so each image will downscale to fit the text column
+		imgs.forEach(function(img) {
+			img.style.maxHeight = textHeight + 'px';
+			img.style.width = '100%';
+			img.style.height = 'auto';
+		});
+	}
+
+	// debounce helper to avoid excessive recalculations during rapid resize
+	var __vs_timer;
+	function scheduleSync() {
+		clearTimeout(__vs_timer);
+		__vs_timer = setTimeout(syncBannerImageToText, 80);
+	}
+
+	// Use ResizeObserver to watch the left text column if available
+	if (window.ResizeObserver) {
+		var ro = new ResizeObserver(scheduleSync);
+		var tb = document.querySelector('.banner_main .text-bg');
+		if (tb) ro.observe(tb);
+	}
+
+	// Also run on load/resize/orientationchange to cover other layout changes
+	$(window).on('load resize orientationchange', scheduleSync);
+
 });

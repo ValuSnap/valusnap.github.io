@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Support — ValuSnap</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Minimal, unopinionated layout so it works even if style.css changes */
+    .support-container{max-width:720px;margin:48px auto;padding:24px;background:#fff;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.06)}
+    label{display:block;margin:8px 0 6px;font-weight:600}
+    input[type=text], textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:15px}
+    textarea{min-height:160px;resize:vertical}
+    .controls{margin-top:14px}
+    .btn{display:inline-block;padding:10px 16px;border-radius:6px;background:#0f8a26;color:#fff;text-decoration:none;border:none;cursor:pointer}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+    .muted{color:#666;font-size:13px;margin-top:8px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header_bg">
+      <div class="header">
+        <div class="container">
+          <div class="row">
+            <div class="col logo_section">
+              <div class="full">
+                <div class="center-desk">
+                  <div class="logo">
+                    <a href="index.html"><img src="images/logo.png" alt="ValuSnap logo" style="height:40px;"/></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main class="support-container">
+    <h1>Contact Support</h1>
+    <p class="muted">This form will open your default mail client with the message prefilled. If you want a server-backed ticket system, we can add that later.</p>
+
+    <form id="support-form" onsubmit="return false;" aria-labelledby="support-heading">
+      <label for="subject">Subject</label>
+      <input id="subject" name="subject" type="text" placeholder="Short summary of the issue" required>
+
+      <label for="body">Message</label>
+      <textarea id="body" name="body" placeholder="Describe the issue, steps to reproduce, device, screenshots (links), and any other details" required></textarea>
+
+      <label for="email">Your email (optional)</label>
+      <input id="email" name="email" type="text" placeholder="your@email.com">
+
+      <div class="controls">
+        <button id="sendBtn" class="btn" type="button">Send Email</button>
+        <button id="clearBtn" class="btn" style="background:#666;margin-left:8px" type="button">Clear</button>
+      </div>
+
+      <p class="muted">By clicking <strong>Send Email</strong> your default mail application will open. The message will be addressed to <code>support@valusnap.ai</code>.</p>
+    </form>
+  </main>
+
+  <script>
+    (function(){
+      var supportTo = 'support@valusnap.ai';
+      var form = document.getElementById('support-form');
+      var subjectEl = document.getElementById('subject');
+      var bodyEl = document.getElementById('body');
+      var emailEl = document.getElementById('email');
+      var sendBtn = document.getElementById('sendBtn');
+      var clearBtn = document.getElementById('clearBtn');
+
+      function encode(val){ return encodeURIComponent(val).replace(/'/g, '%27'); }
+
+      sendBtn.addEventListener('click', function(){
+        var subject = subjectEl.value.trim();
+        var body = bodyEl.value.trim();
+        var replyTo = emailEl.value.trim();
+        if(!subject){ alert('Please enter a subject.'); subjectEl.focus(); return; }
+        if(!body){ alert('Please enter a message.'); bodyEl.focus(); return; }
+
+        // Add reply-to hint in the body so support can reply even if mail client doesn't set Reply-To header
+        if(replyTo){ body = 'Reply-to: ' + replyTo + '\n\n' + body; }
+
+        var mailto = 'mailto:' + supportTo + '?subject=' + encode(subject) + '&body=' + encode(body);
+
+        // Try opening the mail client. This will navigate away in some browsers.
+        window.location.href = mailto;
+
+        // Optionally disable button for a short time to avoid double-click. Not necessary but safe.
+        sendBtn.disabled = true;
+        setTimeout(function(){ sendBtn.disabled = false; }, 1500);
+      });
+
+      clearBtn.addEventListener('click', function(){
+        subjectEl.value = '';
+        bodyEl.value = '';
+        emailEl.value = '';
+        subjectEl.focus();
+      });
+    })();
+  </script>
+</body>
+</html>
